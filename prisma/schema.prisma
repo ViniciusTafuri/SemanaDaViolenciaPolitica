@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Category {
+  MORTE
+  AGRESSAO
+  INTIMIDACAO_DESTRUICAO
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model News {
+  id             String           @id @default(cuid())
+  category       Category
+  isIndigenous   Boolean          @default(false)
+  title          String
+  text           String
+  photoUrl       String
+  donationLink   String?
+  incidentDate   DateTime?
+  status         SubmissionStatus @default(PENDING)
+  submitterName  String?
+  submitterEmail String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  approvedAt     DateTime?
+
+  sources         Source[]
+  editSuggestions EditSuggestion[]
+
+  @@index([status, category])
+  @@index([status, isIndigenous])
+}
+
+model Source {
+  id     String @id @default(cuid())
+  url    String
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  newsId String
+
+  @@index([newsId])
+}
+
+model EditSuggestion {
+  id     String @id @default(cuid())
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  newsId String
+
+  proposedCategory     Category?
+  proposedIsIndigenous Boolean   @default(false)
+  proposedTitle        String?
+  proposedText         String?
+  proposedPhotoUrl     String?
+  proposedDonationLink String?
+  proposedIncidentDate DateTime?
+  proposedSourcesJson  String?
+
+  submitterNote  String?
+  submitterName  String?
+  submitterEmail String?
+
+  status    SubmissionStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([status])
+}

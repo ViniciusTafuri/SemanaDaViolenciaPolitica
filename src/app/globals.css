@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f5f3;
+  --foreground: #19181b;
+  --surface: #ffffff;
+  --border: #e3dedb;
+  --muted: #6b6560;
+
+  --accent: #9f1d1d;
+  --accent-hover: #841717;
+
+  --category-morte: #9f1d1d;
+  --category-morte-bg: #fbe9e9;
+  --category-agressao: #b4530a;
+  --category-agressao-bg: #fdf0e3;
+  --category-intimidacao: #44403c;
+  --category-intimidacao-bg: #ece9e6;
+
+  --tag-indigenous: #166534;
+  --tag-indigenous-bg: #e4f3e8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #141214;
+    --foreground: #f1ede9;
+    --surface: #1c1a1c;
+    --border: #322e30;
+    --muted: #a39d98;
+
+    --accent: #d04343;
+    --accent-hover: #e05a5a;
+
+    --category-morte: #e06060;
+    --category-morte-bg: #2a1616;
+    --category-agressao: #e0902f;
+    --category-agressao-bg: #2a2015;
+    --category-intimidacao: #b9b3ac;
+    --category-intimidacao-bg: #242224;
+
+    --tag-indigenous: #4ade80;
+    --tag-indigenous-bg: #15241a;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
