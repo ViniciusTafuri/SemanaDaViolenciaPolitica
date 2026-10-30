@@ -12,7 +12,8 @@ por um administrador em `/admin`.
 ## Stack
 
 - [Next.js 16](https://nextjs.org) (App Router, Server Actions, Turbopack)
-- [Prisma 7](https://www.prisma.io) com SQLite em desenvolvimento
+- [Prisma 7](https://www.prisma.io) com driver adapter `@prisma/adapter-pg`
+- [Neon](https://neon.tech) (Postgres serverless) como banco de dados, local e em produção
 - [Cloudinary](https://cloudinary.com) para armazenamento das fotos em produção
 - [iron-session](https://github.com/vvo/iron-session) para a sessão do admin (senha única)
 - [zod](https://zod.dev) para validação dos formulários
@@ -26,20 +27,29 @@ por um administrador em `/admin`.
    npm install
    ```
 
-2. Copie o arquivo de variáveis de ambiente e ajuste os valores:
+2. O banco de dados é o Neon Postgres do projeto (ligado via `.neon` /
+   `neon.ts`, branch `production`). Para puxar as variáveis de ambiente
+   (`DATABASE_URL`, `DATABASE_URL_UNPOOLED`) para o seu `.env`:
 
    ```bash
-   cp .env.example .env
+   neon login
+   neon env pull
    ```
 
-   Em desenvolvimento, só é obrigatório definir `ADMIN_PASSWORD` (a senha que
-   você vai usar para entrar em `/admin/login`) e manter o `SESSION_SECRET`
-   gerado (ou gerar o seu com o comando que está nos comentários do arquivo).
-   Deixando as variáveis `CLOUDINARY_*` em branco, as fotos enviadas nos
-   formulários são salvas localmente em `public/uploads` — ótimo para testar,
-   mas **não funciona em produção na Vercel** (veja a seção de deploy).
+   Depois, defina `ADMIN_PASSWORD` (a senha que você vai usar para entrar em
+   `/admin/login`) e mantenha o `SESSION_SECRET` gerado (ou gere o seu com o
+   comando que está nos comentários do `.env.example`). Deixando as
+   variáveis `CLOUDINARY_*` em branco, as fotos enviadas nos formulários são
+   salvas localmente em `public/uploads` — ótimo para testar, mas **não
+   funciona em produção na Vercel** (veja a seção de deploy).
 
-3. Rode as migrações do banco local (SQLite):
+   > Todo mundo que rodar o projeto localmente está apontando para a mesma
+   > branch `production` do Neon. Para trabalhar isolado, crie uma branch de
+   > desenvolvimento com `neon checkout dev --create` e rode `neon env pull`
+   > de novo.
+
+3. Se for a primeira vez (banco ainda sem tabelas) ou depois de alterar
+   `prisma/schema.prisma`, rode as migrações:
 
    ```bash
    npx prisma migrate dev
@@ -68,43 +78,22 @@ por um administrador em `/admin`.
 
 ## Publicando em produção (Vercel)
 
-O projeto está pronto para rodar localmente com SQLite, mas **SQLite não
-funciona na Vercel** (o sistema de arquivos é somente leitura/efêmero em
-funções serverless). Antes de publicar, troque o banco para Postgres:
+O banco (Neon Postgres) já está pronto para produção — é o mesmo usado em
+desenvolvimento. `DATABASE_URL` aponta para a conexão *pooled* (usada pelo
+app via o driver adapter em `src/lib/prisma.ts`); `DATABASE_URL_UNPOOLED` é a
+conexão direta, usada só para migrações (`prisma.config.ts`).
 
-1. Crie um banco Postgres gratuito, por exemplo no [Neon](https://neon.tech)
-   ou no [Vercel Postgres](https://vercel.com/storage/postgres).
-2. Em `prisma/schema.prisma`, troque o provider:
-
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-   }
-   ```
-
-3. Instale o driver adapter do Postgres e remova o do SQLite:
-
-   ```bash
-   npm install @prisma/adapter-pg pg
-   npm uninstall @prisma/adapter-better-sqlite3 better-sqlite3 @types/better-sqlite3
-   ```
-
-4. Em `src/lib/prisma.ts`, troque o adapter do SQLite pelo do Postgres:
-
-   ```ts
-   import { PrismaPg } from "@prisma/adapter-pg";
-   // ...
-   const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL ?? "" });
-   ```
-
-5. Rode `npx prisma migrate dev` localmente (apontando `DATABASE_URL` para o
-   Postgres) para criar as tabelas, depois `npx prisma generate`.
-6. Crie uma conta gratuita no [Cloudinary](https://cloudinary.com) e copie
+1. Crie uma conta gratuita no [Cloudinary](https://cloudinary.com) e copie
    `Cloud name`, `API Key` e `API Secret` do painel.
-7. Na Vercel, configure as variáveis de ambiente do projeto:
-   `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET`, `CLOUDINARY_CLOUD_NAME`,
+2. Na Vercel, configure as variáveis de ambiente do projeto com os mesmos
+   valores do seu `.env`: `DATABASE_URL`, `DATABASE_URL_UNPOOLED`,
+   `ADMIN_PASSWORD`, `SESSION_SECRET`, `CLOUDINARY_CLOUD_NAME`,
    `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`.
-8. Faça o deploy normalmente (`vercel` ou conectando o repositório Git).
+3. Faça o deploy normalmente (`vercel` ou conectando o repositório Git).
+4. Se o schema mudar depois do primeiro deploy, rode `npx prisma migrate dev`
+   localmente (ele usa a conexão direta do Neon) antes de subir o código —
+   as migrações ficam versionadas em `prisma/migrations/` e sobem junto no
+   `git push`.
 
 ## Estrutura
 
