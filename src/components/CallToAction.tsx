@@ -1,7 +1,7 @@
 export function CallToAction() {
   return (
-    <section className="space-y-4 rounded-lg border border-border bg-surface p-5 sm:p-6">
-      <p className="leading-relaxed">
+    <section className="space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-card sm:p-8">
+      <p className="font-serif text-lg leading-relaxed sm:text-xl">
         Estamos vivendo uma onda de violência de motivação política jamais vista na
         nossa história. Você quer ajudar essas vítimas e fazer justiça? Segue os
         passos:

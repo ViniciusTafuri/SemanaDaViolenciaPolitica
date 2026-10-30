@@ -13,6 +13,12 @@ function sourcesFromFormData(formData: FormData): string[] {
     .filter((value): value is string => typeof value === "string" && value.trim() !== "");
 }
 
+function socialLinksFromFormData(formData: FormData): string[] {
+  return formData
+    .getAll("socialLinks")
+    .filter((value): value is string => typeof value === "string" && value.trim() !== "");
+}
+
 function str(formData: FormData, key: string): string | undefined {
   const value = formData.get(key);
   return typeof value === "string" ? value : undefined;
@@ -26,6 +32,7 @@ function newsValuesFromFormData(formData: FormData): SubmittedValues {
     text: str(formData, "text"),
     incidentDate: str(formData, "incidentDate"),
     sources: sourcesFromFormData(formData),
+    socialLinks: socialLinksFromFormData(formData),
     donationLink: str(formData, "donationLink"),
     submitterName: str(formData, "submitterName"),
     submitterEmail: str(formData, "submitterEmail"),
@@ -46,6 +53,7 @@ export async function submitNews(
     text: values.text,
     incidentDate: values.incidentDate,
     sources: values.sources,
+    socialLinks: values.socialLinks,
     donationLink: values.donationLink,
     submitterName: values.submitterName,
     submitterEmail: values.submitterEmail,
@@ -91,6 +99,9 @@ export async function submitNews(
       sources: {
         create: data.sources.map((url) => ({ url })),
       },
+      socialLinks: {
+        create: data.socialLinks.map((url) => ({ url })),
+      },
     },
   });
 
@@ -111,7 +122,7 @@ export async function submitEditSuggestion(
 
   const original = await prisma.news.findFirst({
     where: { id: newsId, status: "APPROVED" },
-    include: { sources: true },
+    include: { sources: true, socialLinks: true },
   });
 
   if (!original) {
@@ -125,6 +136,7 @@ export async function submitEditSuggestion(
     text: values.text,
     incidentDate: values.incidentDate,
     sources: values.sources,
+    socialLinks: values.socialLinks,
     donationLink: values.donationLink,
     submitterNote: values.submitterNote,
     submitterName: values.submitterName,
@@ -161,6 +173,12 @@ export async function submitEditSuggestion(
     originalSources.length !== newSources.length ||
     originalSources.some((url, i) => url !== newSources[i]);
 
+  const originalSocialLinks = original.socialLinks.map((s) => s.url).sort();
+  const newSocialLinks = [...data.socialLinks].sort();
+  const socialLinksChanged =
+    originalSocialLinks.length !== newSocialLinks.length ||
+    originalSocialLinks.some((url, i) => url !== newSocialLinks[i]);
+
   const originalIncidentDateStr = original.incidentDate
     ? original.incidentDate.toISOString().slice(0, 10)
     : "";
@@ -176,6 +194,7 @@ export async function submitEditSuggestion(
     (original.donationLink ?? "") !== (data.donationLink ?? "") ||
     originalIncidentDateStr !== newIncidentDateStr ||
     sourcesChanged ||
+    socialLinksChanged ||
     Boolean(proposedPhotoUrl);
 
   if (!hasChanges) {
@@ -196,6 +215,7 @@ export async function submitEditSuggestion(
       proposedText: data.text,
       proposedIncidentDate: data.incidentDate ?? null,
       proposedSourcesJson: JSON.stringify(data.sources),
+      proposedSocialLinksJson: JSON.stringify(data.socialLinks),
       proposedDonationLink: data.donationLink,
       proposedPhotoUrl,
       submitterNote: data.submitterNote,

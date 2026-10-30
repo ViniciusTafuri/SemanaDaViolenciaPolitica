@@ -24,7 +24,7 @@ export default async function HomePage({
       const [items, count] = await Promise.all([
         prisma.news.findMany({
           where,
-          include: { sources: true },
+          include: { sources: true, socialLinks: true },
           orderBy: { approvedAt: "desc" },
         }),
         prisma.news.count({ where }),
@@ -35,19 +35,9 @@ export default async function HomePage({
 
   return (
     <div className="mx-auto max-w-5xl space-y-12 px-4 py-8">
-      <section className="space-y-3">
-        <h1 className="text-2xl font-bold sm:text-3xl">Semana da Violência Política</h1>
-        <p className="max-w-3xl text-muted">
-          Registro colaborativo de mortes, agressões, intimidações e destruições
-          motivadas por violência política nesta semana. Qualquer pessoa pode enviar
-          uma notícia ou sugerir a edição de uma já publicada; todo conteúdo passa
-          por revisão da administração antes de entrar no ar.
-        </p>
-      </section>
-
       <CallToAction />
 
-      <div id="listas" className="space-y-8">
+      <div id="listas" className="scroll-mt-20 space-y-8">
         <IndigenousFilterToggle active={filterIndigenous} />
 
         <div className="space-y-12">

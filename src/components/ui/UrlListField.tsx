@@ -8,7 +8,19 @@ function nextId() {
   return idCounter;
 }
 
-export function SourcesField({ defaultValues }: { defaultValues?: string[] }) {
+export function UrlListField({
+  name,
+  defaultValues,
+  requireFirst = false,
+  addLabel = "+ Adicionar outro link",
+  placeholder = "https://...",
+}: {
+  name: string;
+  defaultValues?: string[];
+  requireFirst?: boolean;
+  addLabel?: string;
+  placeholder?: string;
+}) {
   const initialValues = defaultValues && defaultValues.length > 0 ? defaultValues : [""];
   const [fields, setFields] = useState(
     initialValues.map((value) => ({ id: nextId(), value }))
@@ -20,10 +32,10 @@ export function SourcesField({ defaultValues }: { defaultValues?: string[] }) {
         <div key={field.id} className="flex gap-2">
           <input
             type="url"
-            name="sources"
+            name={name}
             defaultValue={field.value}
-            required={index === 0}
-            placeholder="https://..."
+            required={requireFirst && index === 0}
+            placeholder={placeholder}
             className="flex-1 rounded-md border border-border bg-surface px-3 py-2"
           />
           {fields.length > 1 && (
@@ -45,7 +57,7 @@ export function SourcesField({ defaultValues }: { defaultValues?: string[] }) {
         onClick={() => setFields((prev) => [...prev, { id: nextId(), value: "" }])}
         className="text-sm font-medium text-accent hover:underline"
       >
-        + Adicionar outro link de fonte
+        {addLabel}
       </button>
     </div>
   );

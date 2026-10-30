@@ -51,6 +51,7 @@ export const newsSubmissionSchema = z.object({
     .array(urlField)
     .min(1, "Adicione ao menos um link de fonte.")
     .max(10, "No máximo 10 links de fonte."),
+  socialLinks: z.array(urlField).max(20, "No máximo 20 links de redes sociais.").default([]),
   donationLink: optionalUrlField,
   submitterName: z.string().trim().max(100).optional(),
   submitterEmail: optionalEmailField,
@@ -76,6 +77,7 @@ export const editSuggestionSchema = z.object({
     .array(urlField)
     .min(1, "Adicione ao menos um link de fonte.")
     .max(10, "No máximo 10 links de fonte."),
+  socialLinks: z.array(urlField).max(20, "No máximo 20 links de redes sociais.").default([]),
   donationLink: optionalUrlField,
   submitterNote: z.string().trim().max(1000).optional(),
   submitterName: z.string().trim().max(100).optional(),

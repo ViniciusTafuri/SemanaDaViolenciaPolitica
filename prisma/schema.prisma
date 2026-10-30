@@ -36,6 +36,7 @@ model News {
   approvedAt     DateTime?
 
   sources         Source[]
+  socialLinks     SocialLink[]
   editSuggestions EditSuggestion[]
 
   @@index([status, category])
@@ -51,19 +52,29 @@ model Source {
   @@index([newsId])
 }
 
+model SocialLink {
+  id     String @id @default(cuid())
+  url    String
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  newsId String
+
+  @@index([newsId])
+}
+
 model EditSuggestion {
   id     String @id @default(cuid())
   news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
   newsId String
 
-  proposedCategory     Category?
-  proposedIsIndigenous Boolean   @default(false)
-  proposedTitle        String?
-  proposedText         String?
-  proposedPhotoUrl     String?
-  proposedDonationLink String?
-  proposedIncidentDate DateTime?
-  proposedSourcesJson  String?
+  proposedCategory        Category?
+  proposedIsIndigenous    Boolean   @default(false)
+  proposedTitle           String?
+  proposedText            String?
+  proposedPhotoUrl        String?
+  proposedDonationLink    String?
+  proposedIncidentDate    DateTime?
+  proposedSourcesJson     String?
+  proposedSocialLinksJson String?
 
   submitterNote  String?
   submitterName  String?

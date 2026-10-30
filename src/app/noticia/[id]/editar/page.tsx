@@ -12,7 +12,7 @@ export default async function EditNewsPage({
   const { id } = await params;
   const news = await prisma.news.findFirst({
     where: { id, status: "APPROVED" },
-    include: { sources: true },
+    include: { sources: true, socialLinks: true },
   });
 
   if (!news) {
@@ -35,6 +35,7 @@ export default async function EditNewsPage({
           text: news.text,
           incidentDate: news.incidentDate ? news.incidentDate.toISOString().slice(0, 10) : "",
           sources: news.sources.map((source) => source.url),
+          socialLinks: news.socialLinks.map((link) => link.url),
           donationLink: news.donationLink ?? "",
           photoUrl: news.photoUrl,
         }}

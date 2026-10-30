@@ -1,43 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f5f3;
-  --foreground: #19181b;
+  --background: #fafafa;
+  --foreground: #18181b;
   --surface: #ffffff;
-  --border: #e3dedb;
-  --muted: #6b6560;
+  --surface-sunken: #f4f4f5;
+  --border: #e4e4e7;
+  --muted: #71717a;
 
   --accent: #9f1d1d;
-  --accent-hover: #841717;
+  --accent-hover: #7f1717;
+  --accent-soft: #fbe9e9;
+
+  --shadow-card: 0 1px 2px rgba(24, 24, 27, 0.04), 0 8px 24px -12px rgba(24, 24, 27, 0.12);
+  --shadow-card-hover: 0 2px 4px rgba(24, 24, 27, 0.06), 0 16px 32px -12px rgba(24, 24, 27, 0.18);
 
   --category-morte: #9f1d1d;
   --category-morte-bg: #fbe9e9;
-  --category-agressao: #b4530a;
+  --category-agressao: #a2540a;
   --category-agressao-bg: #fdf0e3;
-  --category-intimidacao: #44403c;
-  --category-intimidacao-bg: #ece9e6;
+  --category-intimidacao: #3f3f46;
+  --category-intimidacao-bg: #ececed;
 
-  --tag-indigenous: #166534;
+  --tag-indigenous: #15803d;
   --tag-indigenous-bg: #e4f3e8;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #141214;
-    --foreground: #f1ede9;
-    --surface: #1c1a1c;
-    --border: #322e30;
-    --muted: #a39d98;
+    --background: #0f0f10;
+    --foreground: #f4f4f5;
+    --surface: #18181b;
+    --surface-sunken: #1f1f23;
+    --border: #2d2d31;
+    --muted: #a1a1aa;
 
-    --accent: #d04343;
-    --accent-hover: #e05a5a;
+    --accent: #e06060;
+    --accent-hover: #e87c7c;
+    --accent-soft: #2a1616;
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+    --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.3), 0 16px 32px -12px rgba(0, 0, 0, 0.6);
 
     --category-morte: #e06060;
     --category-morte-bg: #2a1616;
     --category-agressao: #e0902f;
     --category-agressao-bg: #2a2015;
-    --category-intimidacao: #b9b3ac;
-    --category-intimidacao-bg: #242224;
+    --category-intimidacao: #c4c4c9;
+    --category-intimidacao-bg: #242226;
 
     --tag-indigenous: #4ade80;
     --tag-indigenous-bg: #15241a;
@@ -48,15 +58,26 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
   --color-border: var(--border);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
   --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-editorial-serif);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+.shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+.shadow-card-hover:hover {
+  box-shadow: var(--shadow-card-hover);
 }

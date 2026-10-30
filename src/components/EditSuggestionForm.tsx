@@ -7,7 +7,7 @@ import { CATEGORY_ORDER, categoryLabel } from "@/lib/category";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { FieldError } from "@/components/ui/FieldError";
 import { FormAlert } from "@/components/ui/FormAlert";
-import { SourcesField } from "@/components/ui/SourcesField";
+import { UrlListField } from "@/components/ui/UrlListField";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { IndigenousCheckbox } from "@/components/ui/IndigenousCheckbox";
 import type { Category } from "@/generated/prisma/client";
@@ -22,6 +22,7 @@ export interface EditSuggestionDefaults {
   text: string;
   incidentDate: string;
   sources: string[];
+  socialLinks: string[];
   donationLink: string;
   photoUrl: string;
 }
@@ -45,6 +46,7 @@ export function EditSuggestionForm({
     text: state.values?.text ?? defaults.text,
     incidentDate: state.values?.incidentDate ?? defaults.incidentDate,
     sources: state.values?.sources ?? defaults.sources,
+    socialLinks: state.values?.socialLinks ?? defaults.socialLinks,
     donationLink: state.values?.donationLink ?? defaults.donationLink,
     submitterNote: state.values?.submitterNote ?? "",
     submitterName: state.values?.submitterName ?? "",
@@ -133,8 +135,25 @@ export function EditSuggestionForm({
 
       <div>
         <span className="mb-1 block text-sm font-medium">Links de fontes</span>
-        <SourcesField defaultValues={effective.sources} />
+        <UrlListField
+          name="sources"
+          defaultValues={effective.sources}
+          requireFirst
+          addLabel="+ Adicionar outro link de fonte"
+        />
         <FieldError messages={state.fieldErrors?.sources} />
+      </div>
+
+      <div>
+        <span className="mb-1 block text-sm font-medium">
+          Links de redes sociais (opcional)
+        </span>
+        <UrlListField
+          name="socialLinks"
+          defaultValues={effective.socialLinks}
+          addLabel="+ Adicionar link de rede social"
+        />
+        <FieldError messages={state.fieldErrors?.socialLinks} />
       </div>
 
       <div>

@@ -7,7 +7,7 @@ import { CATEGORY_ORDER, categoryLabel } from "@/lib/category";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { FieldError } from "@/components/ui/FieldError";
 import { FormAlert } from "@/components/ui/FormAlert";
-import { SourcesField } from "@/components/ui/SourcesField";
+import { UrlListField } from "@/components/ui/UrlListField";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { IndigenousCheckbox } from "@/components/ui/IndigenousCheckbox";
 
@@ -103,8 +103,29 @@ export function NewsSubmitForm() {
 
       <div>
         <span className="mb-1 block text-sm font-medium">Links de fontes</span>
-        <SourcesField defaultValues={values?.sources} />
+        <UrlListField
+          name="sources"
+          defaultValues={values?.sources}
+          requireFirst
+          addLabel="+ Adicionar outro link de fonte"
+        />
         <FieldError messages={state.fieldErrors?.sources} />
+      </div>
+
+      <div>
+        <span className="mb-1 block text-sm font-medium">
+          Links de redes sociais (opcional)
+        </span>
+        <p className="mb-2 text-xs text-muted">
+          Facebook, Instagram, YouTube, X/Twitter, TikTok etc. Esses links aparecem
+          como ícones direto na listagem de notícias.
+        </p>
+        <UrlListField
+          name="socialLinks"
+          defaultValues={values?.socialLinks}
+          addLabel="+ Adicionar link de rede social"
+        />
+        <FieldError messages={state.fieldErrors?.socialLinks} />
       </div>
 
       <div>

@@ -67,6 +67,9 @@ export async function approveEditSuggestion(id: string): Promise<void> {
   const sourcesUpdate = suggestion.proposedSourcesJson
     ? (JSON.parse(suggestion.proposedSourcesJson) as string[])
     : null;
+  const socialLinksUpdate = suggestion.proposedSocialLinksJson
+    ? (JSON.parse(suggestion.proposedSocialLinksJson) as string[])
+    : null;
 
   await prisma.$transaction(async (tx) => {
     await tx.news.update({
@@ -84,6 +87,14 @@ export async function approveEditSuggestion(id: string): Promise<void> {
               sources: {
                 deleteMany: {},
                 create: sourcesUpdate.map((url) => ({ url })),
+              },
+            }
+          : {}),
+        ...(socialLinksUpdate
+          ? {
+              socialLinks: {
+                deleteMany: {},
+                create: socialLinksUpdate.map((url) => ({ url })),
               },
             }
           : {}),

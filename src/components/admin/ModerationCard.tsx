@@ -1,11 +1,11 @@
 import Image from "next/image";
-import type { News, Source } from "@/generated/prisma/client";
+import type { News, SocialLink, Source } from "@/generated/prisma/client";
 import { categoryLabel } from "@/lib/category";
 import { approveNews, rejectNews } from "@/app/actions/admin";
 import { ApproveRejectButtons } from "@/components/admin/ApproveRejectButtons";
 import { IndigenousTag } from "@/components/IndigenousTag";
 
-type NewsWithSources = News & { sources: Source[] };
+type NewsWithSources = News & { sources: Source[]; socialLinks: SocialLink[] };
 
 export function ModerationCard({ news }: { news: NewsWithSources }) {
   return (
@@ -35,6 +35,9 @@ export function ModerationCard({ news }: { news: NewsWithSources }) {
 
       <div className="space-y-1 text-xs text-muted">
         <p>Fontes: {news.sources.map((source) => source.url).join(", ")}</p>
+        {news.socialLinks.length > 0 && (
+          <p>Redes sociais: {news.socialLinks.map((link) => link.url).join(", ")}</p>
+        )}
         {news.donationLink && <p>Doação: {news.donationLink}</p>}
         {(news.submitterName || news.submitterEmail) && (
           <p>

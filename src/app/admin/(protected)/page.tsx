@@ -8,12 +8,12 @@ export default async function AdminDashboardPage() {
   const [pendingNews, pendingSuggestions] = await Promise.all([
     prisma.news.findMany({
       where: { status: "PENDING" },
-      include: { sources: true },
+      include: { sources: true, socialLinks: true },
       orderBy: { createdAt: "asc" },
     }),
     prisma.editSuggestion.findMany({
       where: { status: "PENDING" },
-      include: { news: { include: { sources: true } } },
+      include: { news: { include: { sources: true, socialLinks: true } } },
       orderBy: { createdAt: "asc" },
     }),
   ]);

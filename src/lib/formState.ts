@@ -5,6 +5,7 @@ export type SubmittedValues = {
   text?: string;
   incidentDate?: string;
   sources?: string[];
+  socialLinks?: string[];
   donationLink?: string;
   submitterNote?: string;
   submitterName?: string;

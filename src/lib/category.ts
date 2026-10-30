@@ -21,3 +21,9 @@ export const CATEGORY_SLUG: Record<Category, string> = {
 export function categoryLabel(category: Category): string {
   return CATEGORY_LABEL[category];
 }
+
+export const CATEGORY_ACCENT_VAR: Record<Category, string> = {
+  MORTE: "var(--category-morte)",
+  AGRESSAO: "var(--category-agressao)",
+  INTIMIDACAO_DESTRUICAO: "var(--category-intimidacao)",
+};

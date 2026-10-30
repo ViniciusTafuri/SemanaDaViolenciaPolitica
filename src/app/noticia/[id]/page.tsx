@@ -4,6 +4,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { categoryLabel } from "@/lib/category";
 import { IndigenousTag } from "@/components/IndigenousTag";
+import { SocialLinkIcon } from "@/components/ui/SocialLinkIcon";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export default async function NewsDetailPage({
   const { id } = await params;
   const news = await prisma.news.findFirst({
     where: { id, status: "APPROVED" },
-    include: { sources: true },
+    include: { sources: true, socialLinks: true },
   });
 
   if (!news) {
@@ -40,25 +41,35 @@ export default async function NewsDetailPage({
         ← Voltar para as listas
       </Link>
 
-      <header className="space-y-2">
+      <header className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold uppercase tracking-wide text-accent">
+          <span
+            className="rounded-full px-3 py-0.5 text-xs font-semibold uppercase tracking-wide text-white"
+            style={{ backgroundColor: "var(--accent)" }}
+          >
             {categoryLabel(news.category)}
           </span>
           {news.isIndigenous && <IndigenousTag />}
         </div>
-        <h1 className="text-2xl font-bold sm:text-3xl">{news.title}</h1>
+        <h1 className="font-serif text-3xl font-bold leading-tight sm:text-4xl">{news.title}</h1>
         {incidentDate && <p className="text-sm text-muted">Ocorrido em {incidentDate}</p>}
+        {news.socialLinks.length > 0 && (
+          <div className="flex items-center gap-2 pt-1">
+            {news.socialLinks.map((link) => (
+              <SocialLinkIcon key={link.id} url={link.url} />
+            ))}
+          </div>
+        )}
       </header>
 
-      <div className="relative aspect-video overflow-hidden rounded-lg border border-border">
+      <div className="relative aspect-video overflow-hidden rounded-2xl border border-border shadow-card">
         <Image src={news.photoUrl} alt={news.title} fill className="object-cover" sizes="100vw" />
       </div>
 
-      <p className="whitespace-pre-wrap leading-relaxed">{news.text}</p>
+      <p className="whitespace-pre-wrap text-lg leading-relaxed">{news.text}</p>
 
       <div className="space-y-2">
-        <h2 className="font-semibold">Fontes</h2>
+        <h2 className="font-serif text-lg font-semibold">Fontes</h2>
         <ul className="list-disc space-y-1 pl-5">
           {news.sources.map((source) => (
             <li key={source.id}>
@@ -80,7 +91,7 @@ export default async function NewsDetailPage({
           href={news.donationLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block rounded-md bg-accent px-4 py-2 font-medium text-white hover:bg-accent-hover"
+          className="inline-block rounded-full bg-accent px-5 py-2.5 font-medium text-white transition-colors hover:bg-accent-hover"
         >
           Apoiar / Doar
         </a>

@@ -1,10 +1,12 @@
 import Image from "next/image";
-import type { EditSuggestion, News, Source } from "@/generated/prisma/client";
+import type { EditSuggestion, News, SocialLink, Source } from "@/generated/prisma/client";
 import { categoryLabel } from "@/lib/category";
 import { approveEditSuggestion, rejectEditSuggestion } from "@/app/actions/admin";
 import { ApproveRejectButtons } from "@/components/admin/ApproveRejectButtons";
 
-type SuggestionWithNews = EditSuggestion & { news: News & { sources: Source[] } };
+type SuggestionWithNews = EditSuggestion & {
+  news: News & { sources: Source[]; socialLinks: SocialLink[] };
+};
 
 function normalize(value?: string | null): string {
   return value ?? "";
@@ -45,6 +47,14 @@ export function EditSuggestionCard({ suggestion }: { suggestion: SuggestionWithN
   const originalSources = news.sources.map((source) => source.url);
   const sourcesChanged =
     JSON.stringify([...originalSources].sort()) !== JSON.stringify([...proposedSources].sort());
+
+  const proposedSocialLinks: string[] = suggestion.proposedSocialLinksJson
+    ? JSON.parse(suggestion.proposedSocialLinksJson)
+    : [];
+  const originalSocialLinks = news.socialLinks.map((link) => link.url);
+  const socialLinksChanged =
+    JSON.stringify([...originalSocialLinks].sort()) !==
+    JSON.stringify([...proposedSocialLinks].sort());
 
   return (
     <div className="space-y-3 rounded-lg border border-border bg-surface p-4">
@@ -87,6 +97,18 @@ export function EditSuggestionCard({ suggestion }: { suggestion: SuggestionWithN
             <p className="font-medium">Fontes</p>
             <p className="text-muted line-through">{originalSources.join(", ") || "(nenhuma)"}</p>
             <p style={{ color: "var(--accent)" }}>{proposedSources.join(", ")}</p>
+          </div>
+        )}
+
+        {socialLinksChanged && (
+          <div className="space-y-0.5 text-sm">
+            <p className="font-medium">Redes sociais</p>
+            <p className="text-muted line-through">
+              {originalSocialLinks.join(", ") || "(nenhuma)"}
+            </p>
+            <p style={{ color: "var(--accent)" }}>
+              {proposedSocialLinks.join(", ") || "(nenhuma)"}
+            </p>
           </div>
         )}
 
